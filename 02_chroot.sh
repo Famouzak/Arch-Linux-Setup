@@ -1,11 +1,17 @@
 #!/bin/bash
 set -e
 
-HOSTNAME="archlinux"
-USERNAME="famouzak"
+# Load variabel dari 01_install.sh
+if [ -f /root/install_vars.sh ]; then
+  source /root/install_vars.sh
+else
+  HOSTNAME="archlinux"
+  USERNAME="famouzak"
+fi
+
 TIMEZONE="Asia/Jakarta"
 
-echo "=== 1. Timezone & Locale ==="
+echo "=== 1. Timezone, Locale & Hostname ==="
 ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
 hwclock --systohc
 sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
@@ -13,8 +19,18 @@ locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 echo "$HOSTNAME" > /etc/hostname
 
+# Setup /etc/hosts
+cat <<EOF > /etc/hosts
+127.0.0.1   localhost
+::1         localhost
+127.0.1.1   $HOSTNAME.localdomain $HOSTNAME
+EOF
+
 echo "=== 2. Create User & Sudo ==="
-useradd -m -G wheel,video,audio,storage,optical,input -s /bin/bash $USERNAME
+if ! id -u $USERNAME &>/dev/null; then
+  useradd -m -G wheel,video,audio,storage,optical,input -s /bin/bash $USERNAME
+fi
+
 echo "Set password untuk user '$USERNAME':"
 passwd $USERNAME
 echo "Set password untuk root:"
@@ -36,6 +52,7 @@ pacman -S --noconfirm \
 
 echo "=== 5. Install & Setup Tema SDDM Elegant ==="
 pacman -S --noconfirm qt5-graphicaleffects qt5-quickcontrols2 qt5-svg git
+rm -rf /usr/share/sddm/themes/elegant-sddm
 git clone https://github.com/sniper1720/elegant-sddm-archlinux-theme.git /usr/share/sddm/themes/elegant-sddm
 
 mkdir -p /etc/sddm.conf.d
@@ -48,8 +65,10 @@ echo "=== 6. Bootloader GRUB & Tools Snapper ==="
 pacman -S --noconfirm \
   grub efibootmgr grub-btrfs snapper snap-pac inotify-tools os-prober
 
-# Set Kernel Zen sebagai default di GRUB
-echo 'GRUB_TOP_LEVEL="/boot/vmlinuz-linux-zen"' >> /etc/default/grub
+# Set Kernel Zen sebagai default di GRUB jika belum ada
+if ! grep -q "GRUB_TOP_LEVEL" /etc/default/grub; then
+  echo 'GRUB_TOP_LEVEL="/boot/vmlinuz-linux-zen"' >> /etc/default/grub
+fi
 
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
 grub-mkconfig -o /boot/grub/grub.cfg
