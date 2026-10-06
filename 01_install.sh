@@ -10,7 +10,7 @@ USERNAME="famouzak"
 echo "=== 1. Sync Clock & Update Mirrorlist ==="
 timedatectl set-ntp true
 pacman -Sy --noconfirm reflector
-reflector --latest 10 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+reflector --country Indonesia,Singapore --protocol https --sort rate --save /etc/pacman.d/mirrorlist
 
 echo "=== 2. Partitioning NVMe ($NVME) ==="
 sgdisk --zap-all $NVME
