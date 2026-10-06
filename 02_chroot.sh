@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# Load variabel dari 01_install.sh
+# Load variabel from 01_install.sh
 if [ -f /root/install_vars.sh ]; then
   source /root/install_vars.sh
 else
@@ -26,7 +26,7 @@ cat <<EOF > /etc/hosts
 127.0.1.1   $HOSTNAME.localdomain $HOSTNAME
 EOF
 
-echo "=== 2. Create User & Sudo ==="
+echo "=== 2. Create Password for User & Root ==="
 if ! id -u $USERNAME &>/dev/null; then
   useradd -m -G wheel,video,audio,storage,optical,input -s /bin/bash $USERNAME
 fi
