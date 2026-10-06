@@ -56,9 +56,13 @@ mount $HDD_PART /mnt/mnt/wdblue
 
 echo "=== 7. Installing Base System ==="
 pacstrap -K /mnt \
-  base base-devel linux linux-firmware amd-ucode \
+  base base-devel \
+  linux linux-headers \
+  linux-lts linux-lts-headers \
+  linux-zen linux-zen-headers \
+  linux-firmware amd-ucode \
   btrfs-progs neovim git networkmanager sudo
-
+  
 echo "=== 8. Generating FSTAB (Mount NVMe & HDD ) ==="
 genfstab -U /mnt >> /mnt/etc/fstab
 
