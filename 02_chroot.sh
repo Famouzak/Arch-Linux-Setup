@@ -79,3 +79,12 @@ systemctl enable sddm
 systemctl enable grub-btrfsd
 
 echo "=== Chroot Configuration Selesai! ==="
+
+echo "=== 8. Persiapan Post-Install Script ==="
+if [ -f /root/scripts/03_postinstall.sh ]; then
+  cp /root/scripts/03_postinstall.sh /home/$USERNAME/
+  chown $USERNAME:$USERNAME /home/$USERNAME/03_postinstall.sh
+  chmod +x /home/$USERNAME/03_postinstall.sh
+  echo "File 03_postinstall.sh berhasil disalin ke /home/$USERNAME/"
+fi
+
