@@ -60,7 +60,7 @@ Custom Scrypt to Run LED CPU MONITORING for OCYPUS A40 GAMMA
 BOOT INTO ARCH LINUX LIVE ISO
 
 $ pacman -Sy
-$ pacman -Sy git reflector
+$ pacman -Sy git
 
 Clone the Repo
 
@@ -74,30 +74,20 @@ Run the Scrypt
 
 $./01_install.sh
 
-After Step 01, Then Run Step 02
+After Step 01, it will automatically running 02_chroot.sh
 
-# 1. Copy the Scrypt
-$ cp -r . /mnt/root/scripts
+You will be prompted to Make HOSTNAME & USERNAME
 
-# 2. arch-chroot environment
-$ arch-chroot /mnt
-
-# 3. Go to Scrypts Foldef
-$ cd /root/scripts
-
-# 4. Run the Scrypts
-$ ./02_chroot.sh
-
-
-PREPARATION BEFORE EXITING CHROOT
-
-$ cp 03_postinstall.sh /home/famouzak/
-
-$ chown famouzak:famouzak /home/famouzak/03_postinstall.sh
+after finished , type
 
 $ exit
-$ umount -R /mnt
 $ reboot
+
+Booting on KDE PLASMA
+
+Run the third steps by opening alacritty
+
+$ ./03_postinstall.sh
 
 
 
