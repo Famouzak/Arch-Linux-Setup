@@ -4,13 +4,24 @@ set -e
 # Target Disks
 NVME="/dev/nvme0n1"
 HDD_PART="/dev/sda1"
-HOSTNAME="archlinux"
-USERNAME="famouzak"
+
+echo "=== Input Konfigurasi Sistem ==="
+read -p "Masukkan Hostname [default: archlinux]: " INPUT_HOSTNAME
+HOSTNAME=${INPUT_HOSTNAME:-archlinux}
+
+read -p "Masukkan Username [default: famouzak]: " INPUT_USERNAME
+USERNAME=${INPUT_USERNAME:-famouzak}
+
+echo "----------------------------------------"
+echo " Hostname : $HOSTNAME"
+echo " Username : $USERNAME"
+echo "----------------------------------------"
 
 echo "=== 1. Sync Clock & Update Mirrorlist ==="
 timedatectl set-ntp true
 pacman -Sy --noconfirm reflector
-reflector --country Indonesia,Singapore --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+echo "Mencari mirror tercepat (Indonesia & Singapura)..."
+reflector --country Indonesia,Singapore --protocol https --latest 15 --download-timeout 5 --sort rate --save /etc/pacman.d/mirrorlist
 
 echo "=== 2. Partitioning NVMe ($NVME) ==="
 sgdisk --zap-all $NVME
@@ -61,9 +72,23 @@ pacstrap -K /mnt \
   linux-lts linux-lts-headers \
   linux-zen linux-zen-headers \
   linux-firmware amd-ucode \
-  btrfs-progs neovim git networkmanager sudo
-  
-echo "=== 8. Generating FSTAB (Mount NVMe & HDD ) ==="
+  btrfs-progs neovim git networkmanager sudo reflector
+
+echo "=== 8. Generating FSTAB (Mount NVMe & HDD) ==="
 genfstab -U /mnt >> /mnt/etc/fstab
 
-echo "=== Base Install Selesai! HDD berhasil di-mount di /mnt/wdblue ==="
+echo "=== 9. Menyiapkan Lingkungan untuk Chroot ==="
+# Simpan variabel untuk dibaca 02_chroot.sh
+cat <<EOF > /mnt/root/install_vars.sh
+HOSTNAME="$HOSTNAME"
+USERNAME="$USERNAME"
+EOF
+
+# Copy seluruh folder skrip saat ini ke /mnt/root/scripts
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+mkdir -p /mnt/root/scripts
+cp -r "$SCRIPT_DIR"/* /mnt/root/scripts/
+chmod +x /mnt/root/scripts/*.sh
+
+echo "=== Base Install Selesai! Melanjutkan otomatis ke Step 02 (Chroot)... ==="
+arch-chroot /mnt /bin/bash /root/scripts/02_chroot.sh
