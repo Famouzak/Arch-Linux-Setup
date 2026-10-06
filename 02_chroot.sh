@@ -51,14 +51,22 @@ pacman -S --noconfirm \
   alacritty plasma-meta gwenview okular konsole dolphin kdeconnect kdenlive sddm wayland egl-wayland xdg-user-dirs
 
 echo "=== 5. Install & Setup Tema SDDM Elegant ==="
-pacman -S --noconfirm qt5-graphicaleffects qt5-quickcontrols2 qt5-svg git
-rm -rf /usr/share/sddm/themes/elegant-sddm
-git clone https://github.com/sniper1720/elegant-sddm-archlinux-theme.git /usr/share/sddm/themes/elegant-sddm
+# Install dependensi Qt6 yang dibutuhkan oleh tema Elegant SDDM
+pacman -S --noconfirm qt6-base qt6-declarative qt6-svg git
 
+# Bersihkan direktori sementara dan lokasi tema lama jika ada
+rm -rf /tmp/elegant-sddm /usr/share/sddm/themes/elegant-archlinux /usr/share/sddm/themes/elegant-sddm
+
+# Clone repositori ke /tmp lalu ambil folder tema 'elegant-archlinux'
+git clone https://github.com/sniper1720/elegant-sddm-archlinux-theme.git /tmp/elegant-sddm
+cp -r /tmp/elegant-sddm/elegant-archlinux /usr/share/sddm/themes/
+rm -rf /tmp/elegant-sddm
+
+# Terapkan konfigurasi SDDM
 mkdir -p /etc/sddm.conf.d
 cat << 'EOF' > /etc/sddm.conf.d/theme.conf
 [Theme]
-Current=elegant-sddm
+Current=elegant-archlinux
 EOF
 
 echo "=== 6. Bootloader GRUB & Tools Snapper ==="
@@ -78,8 +86,6 @@ systemctl enable NetworkManager
 systemctl enable sddm
 systemctl enable grub-btrfsd
 
-echo "=== Chroot Configuration Selesai! ==="
-
 echo "=== 8. Persiapan Post-Install Script ==="
 if [ -f /root/scripts/03_postinstall.sh ]; then
   cp /root/scripts/03_postinstall.sh /home/$USERNAME/
@@ -88,3 +94,4 @@ if [ -f /root/scripts/03_postinstall.sh ]; then
   echo "File 03_postinstall.sh berhasil disalin ke /home/$USERNAME/"
 fi
 
+echo "=== Chroot Configuration Selesai! ==="
