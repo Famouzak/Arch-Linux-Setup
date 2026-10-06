@@ -24,12 +24,12 @@ if ! command -v yay &> /dev/null; then
   rm -rf /tmp/yay
 fi
 
-echo "=== 4. Install Gaming & Streaming Tools (Official Repos) ==="
+echo "=== 4. Install Gaming & Streaming Tools (Arch Repos) ==="
 sudo pacman -S --noconfirm --needed \
   steam wine-staging winetricks \
   gamemode lib32-gamemode \
   mangohud lib32-mangohud goverlay lact \
-  obs-studio ffmpeg vlc mpv gstreamer gamescope gamemode \
+  obs-studio ffmpeg vlc mpv gstreamer gamescope \
   gnutls lib32-gnutls giflib \
   v4l2loopback-dkms v4l2loopback-utils
 
@@ -44,7 +44,7 @@ yay -S --noconfirm --needed \
 echo "=== 6. Enable Service LACT (Overclock & Fan Control AMD) ==="
 sudo systemctl enable --now lactd
 
-echo "=== 7. Konfigurasi Snapper (Btrfs Snapshots) ==="
+echo "=== 7.Snapper Configuration (Btrfs Snapshots) ==="
 sudo umount /.snapshots || true
 sudo rm -rf /.snapshots
 sudo snapper -c root create-config /
@@ -82,7 +82,7 @@ EOF'
   sudo udevadm control --reload
   sudo udevadm trigger
 
-  # Install & jalankan systemd service
+  # Install & Running systemd service
   cd "$HOME/ocypus-a40-digital-linux"
   sudo ./ocypus-control.py install-service -u c -s k10temp -r 2.0 --model gamma
   sudo systemctl daemon-reload
