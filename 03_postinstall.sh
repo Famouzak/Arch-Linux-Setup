@@ -1,17 +1,17 @@
 #!/bin/bash
 set -e
 
-# Pastikan skrip TIDAK dijalankan sebagai root/sudo
+# Run the Scrypt as User
 if [ "$EUID" -eq 0 ]; then
-  echo "ERROR: Jangan jalankan skrip ini dengan sudo!"
-  echo "Jalankan sebagai user biasa: ./03_postinstall.sh"
+  echo "ERROR: Run as User not Root!"
+  echo "Run as User: ./03_postinstall.sh"
   exit 1
 fi
 
 echo "=== 1. Update Directory Default User (XDG) ==="
 xdg-user-dirs-update
 
-echo "=== 2. Install Tools Dasar (Base-Devel & Kernel Headers) ==="
+echo "=== 2. Install Base Tools (Base-Devel & Kernel Headers) ==="
 sudo pacman -S --noconfirm --needed base-devel linux-zen-headers git
 
 echo "=== 3. Install YAY (AUR Helper) ==="
@@ -29,11 +29,11 @@ sudo pacman -S --noconfirm --needed \
   steam wine-staging winetricks \
   gamemode lib32-gamemode \
   mangohud lib32-mangohud goverlay lact \
-  obs-studio ffmpeg vlc mpv gstreamer \
+  obs-studio ffmpeg vlc mpv gstreamer gamescope gamemode \
   gnutls lib32-gnutls giflib \
   v4l2loopback-dkms v4l2loopback-utils
 
-echo "=== 5. Install Aplikasi AUR (Brave, ProtonUp-Qt, Proton-GE, lib32-giflib) ==="
+echo "=== 5. Install AUR Package ==="
 yay -S --noconfirm --needed \
   brave-bin \
   darkly-bin \
@@ -58,7 +58,7 @@ sudo systemctl enable --now snapper-timeline.timer
 sudo systemctl enable --now snapper-cleanup.timer
 sudo snapper -c root set-config ALLOW_USERS=$USER SYNC_USER=yes
 
-echo "=== 8. Setup Hak Akses HDD WD Blue (/mnt/wdblue) ==="
+echo "=== 8. Setup Access HDD WD Blue (/mnt/wdblue) ==="
 if [ -d "/mnt/wdblue" ]; then
   sudo chown -R $USER:$USER /mnt/wdblue
 fi
@@ -88,11 +88,11 @@ EOF'
   sudo systemctl daemon-reload
   sudo systemctl enable --now ocypus-lcd.service
   cd ~
-  echo "Ocypus LCD Display berhasil dikonfigurasi!"
+  echo "Ocypus LCD Display running succesfully"
 else
-  echo "Peringatan: Folder $OCYPUS_SRC tidak ditemukan di HDD. Setup Ocypus dilewati."
+  echo "Warning: Folder $OCYPUS_SRC are not found. Setup Ocypus --Skipping."
 fi
 
 echo "======================================================"
-echo "=== Setup Post-Install Selesai! Sistem Siap Pakai. ==="
+echo "=== Setup Post-Install is Done! GLHF! ==="
 echo "======================================================"
