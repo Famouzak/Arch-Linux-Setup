@@ -89,3 +89,15 @@ $ cd /root/scripts
 $ ./02_chroot.sh
 
 
+PREPARATION BEFORE EXITING CHROOT
+
+$ cp 03_postinstall.sh /home/famouzak/
+
+$ chown famouzak:famouzak /home/famouzak/03_postinstall.sh
+
+$ exit
+$ umount -R /mnt
+$ reboot
+
+
+
