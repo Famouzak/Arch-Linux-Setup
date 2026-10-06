@@ -51,7 +51,7 @@ pacman -S --noconfirm \
   alacritty plasma-meta gwenview okular konsole dolphin kdeconnect kdenlive sddm wayland egl-wayland xdg-user-dirs
 
 echo "=== 5. Install & Setup Tema SDDM Elegant ==="
-# Install dependensi Qt6 yang dibutuhkan oleh tema Elegant SDDM
+# Dependensi Qt6 untuk SDDM Plasma 6
 pacman -S --noconfirm qt6-base qt6-declarative qt6-svg git
 
 # Bersihkan direktori sementara dan lokasi tema lama jika ada
@@ -78,7 +78,8 @@ if ! grep -q "GRUB_TOP_LEVEL" /etc/default/grub; then
   echo 'GRUB_TOP_LEVEL="/boot/vmlinuz-linux-zen"' >> /etc/default/grub
 fi
 
-grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
+# Flag --removable wajib ada agar dibuatkan fallback EFI/BOOT/BOOTX64.EFI
+grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB --removable
 grub-mkconfig -o /boot/grub/grub.cfg
 
 echo "=== 7. Enable Services ==="
