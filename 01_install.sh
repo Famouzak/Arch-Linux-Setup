@@ -5,11 +5,11 @@ set -e
 NVME="/dev/nvme0n1"
 HDD_PART="/dev/sda1"
 
-echo "=== Input Konfigurasi Sistem ==="
-read -p "Masukkan Hostname [default: archlinux]: " INPUT_HOSTNAME
+echo "=== Input System Configuration ==="
+read -p "Set Hostname [default: archlinux]: " INPUT_HOSTNAME
 HOSTNAME=${INPUT_HOSTNAME:-archlinux}
 
-read -p "Masukkan Username [default: famouzak]: " INPUT_USERNAME
+read -p "Set Username [default: famouzak]: " INPUT_USERNAME
 USERNAME=${INPUT_USERNAME:-famouzak}
 
 echo "----------------------------------------"
@@ -20,7 +20,7 @@ echo "----------------------------------------"
 echo "=== 1. Sync Clock & Update Mirrorlist ==="
 timedatectl set-ntp true
 pacman -Sy --noconfirm reflector
-echo "Mencari mirror tercepat (Indonesia & Singapura)..."
+echo "Searching for the fastest mirror ..."
 reflector --country Indonesia,Singapore --protocol https --latest 15 --download-timeout 5 --sort rate --save /etc/pacman.d/mirrorlist
 
 echo "=== 2. Partitioning NVMe ($NVME) ==="
@@ -77,18 +77,18 @@ pacstrap -K /mnt \
 echo "=== 8. Generating FSTAB (Mount NVMe & HDD) ==="
 genfstab -U /mnt >> /mnt/etc/fstab
 
-echo "=== 9. Menyiapkan Lingkungan untuk Chroot ==="
-# Simpan variabel untuk dibaca 02_chroot.sh
+echo "=== 9. Setting Up Environment for Chroot ==="
+# Save variabel to read by 02_chroot.sh
 cat <<EOF > /mnt/root/install_vars.sh
 HOSTNAME="$HOSTNAME"
 USERNAME="$USERNAME"
 EOF
 
-# Copy seluruh folder skrip saat ini ke /mnt/root/scripts
+# Copy All Scrypts Folder to /mnt/root/scripts
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 mkdir -p /mnt/root/scripts
 cp -r "$SCRIPT_DIR"/* /mnt/root/scripts/
 chmod +x /mnt/root/scripts/*.sh
 
-echo "=== Base Install Selesai! Melanjutkan otomatis ke Step 02 (Chroot)... ==="
+echo "=== Base Install is Finished! Continuing to Step 02 (Chroot)... ==="
 arch-chroot /mnt /bin/bash /root/scripts/02_chroot.sh
