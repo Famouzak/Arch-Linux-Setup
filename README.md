@@ -61,6 +61,7 @@ Custom Scrypt to Run LED CPU MONITORING for OCYPUS A40 GAMMA
 BOOT INTO ARCH LINUX LIVE ISO
 
 $ pacman -Sy
+
 $ pacman -Sy git
 
 Clone the Repo
