@@ -2,7 +2,7 @@
 This is for personal use only by Famouzak, Use it with your own risk.
 This scrypt was made with the help of AI for AMD System and intended to make install Arch linux for Famouzak easier to Gaming & Streaming.
 
-This Installer Scrypt are made by reading Arch Wiki Installation Guide.
+This Installer Scrypt are based on Arch Wiki Installation Guide.
 
 My PC Specs ;
 
@@ -13,7 +13,9 @@ KLEVV BOLT XR 2X8 GB DDR4 MEMORY
 WD BLACK SN750 256 GB NVME GEN 4X4
 WD BLUE 500 GB HDD
 THERMALRIGHT TR KG-650 W GOLD
-CPU COOLER : OCYPUS GAMMA A40 DIGITAL ARGB
+
+CPU COOLER ;
+OCYPUS GAMMA A40 DIGITAL ARGB
 
 PERIPHERAL ;
 
@@ -87,7 +89,7 @@ $ reboot
 
 Booting on KDE PLASMA
 
-Run the third steps by opening alacritty
+Run the third scrypt by opening alacritty
 
 $ ./03_postinstall.sh
 
