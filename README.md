@@ -53,8 +53,9 @@ AUR ; Brave Browser , Darkly-Bin
 == SCRYPTS ==
 Custom Scrypt to Run LED CPU MONITORING for OCYPUS A40 GAMMA
 
-
-HOW TO USE THIS SCRYPT
+=============================================
+        HOW TO USE THIS SCRYPTS
+=============================================
 
 BOOT INTO ARCH LINUX LIVE ISO
 
