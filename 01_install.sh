@@ -1,0 +1,65 @@
+#!/bin/bash
+set -e
+
+# Target Disks
+NVME="/dev/nvme0n1"
+HDD_PART="/dev/sda1"
+HOSTNAME="archlinux"
+USERNAME="famouzak"
+
+echo "=== 1. Sync Clock & Update Mirrorlist ==="
+timedatectl set-ntp true
+pacman -Sy --noconfirm reflector
+reflector --latest 10 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+
+echo "=== 2. Partitioning NVMe ($NVME) ==="
+sgdisk --zap-all $NVME
+parted -s $NVME mklabel gpt
+parted -s $NVME mkpart ESP fat32 1MiB 1024MiB             # 1 GB EFI
+parted -s $NVME set 1 esp on
+parted -s $NVME mkpart primary linux-swap 1024MiB 5120MiB # 4 GB Swap
+parted -s $NVME mkpart primary btrfs 5120MiB 100%         # Sisa ~251 GB Btrfs
+
+BOOT_PART="${NVME}p1"
+SWAP_PART="${NVME}p2"
+ROOT_PART="${NVME}p3"
+
+echo "=== 3. Formatting NVMe Partitions ==="
+mkfs.fat -F32 -n "EFI" $BOOT_PART
+mkswap -L "ARCH_SWAP" $SWAP_PART
+swapon $SWAP_PART
+mkfs.btrfs -f -L "ARCH_ROOT" $ROOT_PART
+
+echo "=== 4. Creating Btrfs Subvolumes ==="
+mount $ROOT_PART /mnt
+btrfs subvolume create /mnt/@
+btrfs subvolume create /mnt/@home
+btrfs subvolume create /mnt/@snapshots
+btrfs subvolume create /mnt/@var_log
+btrfs subvolume create /mnt/@pkg
+umount /mnt
+
+echo "=== 5. Mounting Subvolumes ==="
+BTRFS_OPTS="noatime,compress=zstd:1,ssd,discard=async,space_cache=v2"
+
+mount -o $BTRFS_OPTS,subvol=@ $ROOT_PART /mnt
+mkdir -p /mnt/{boot/efi,home,.snapshots,var/log,var/cache/pacman/pkg,mnt/wdblue}
+
+mount -o $BTRFS_OPTS,subvol=@home $ROOT_PART /mnt/home
+mount -o $BTRFS_OPTS,subvol=@snapshots $ROOT_PART /mnt/.snapshots
+mount -o $BTRFS_OPTS,subvol=@var_log $ROOT_PART /mnt/var/log
+mount -o $BTRFS_OPTS,subvol=@pkg $ROOT_PART /mnt/var/cache/pacman/pkg
+mount $BOOT_PART /mnt/boot/efi
+
+echo "=== 6. Mounting HDD WD BLUE ==="
+mount $HDD_PART /mnt/mnt/wdblue
+
+echo "=== 7. Installing Base System ==="
+pacstrap -K /mnt \
+  base base-devel linux linux-firmware amd-ucode \
+  btrfs-progs neovim git networkmanager sudo
+
+echo "=== 8. Generating FSTAB (Mount NVMe & HDD ) ==="
+genfstab -U /mnt >> /mnt/etc/fstab
+
+echo "=== Base Install Selesai! HDD berhasil di-mount di /mnt/wdblue ==="
