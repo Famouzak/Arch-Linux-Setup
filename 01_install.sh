@@ -39,7 +39,7 @@ echo "=== 3. Formatting NVMe Partitions ==="
 mkfs.fat -F32 -n "EFI" $BOOT_PART
 mkswap -L "ARCH_SWAP" $SWAP_PART
 swapon $SWAP_PART
-mkfs.btrfs -f -L "ARCH_ROOT" $ROOT_PART
+mkfs.btrfs -f -L "ARCH_LINUX" $ROOT_PART
 
 echo "=== 4. Creating Btrfs Subvolumes ==="
 mount $ROOT_PART /mnt
@@ -72,7 +72,7 @@ pacstrap -K /mnt \
   linux-lts linux-lts-headers \
   linux-zen linux-zen-headers \
   linux-firmware amd-ucode \
-  btrfs-progs neovim git networkmanager sudo reflector
+  btrfs-progs neovim nano git networkmanager sudo reflector
 
 echo "=== 8. Generating FSTAB (Mount NVMe & HDD) ==="
 genfstab -U /mnt >> /mnt/etc/fstab
