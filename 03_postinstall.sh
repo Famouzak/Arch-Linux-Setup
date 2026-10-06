@@ -28,16 +28,18 @@ echo "=== 4. Install Gaming & Streaming Tools (Official Repos) ==="
 sudo pacman -S --noconfirm --needed \
   steam wine-staging winetricks \
   gamemode lib32-gamemode \
-  mangohud lib32-mangohud goverlay lact protonup-qt \
+  mangohud lib32-mangohud goverlay lact \
   obs-studio ffmpeg vlc mpv gstreamer \
-  gnutls lib32-gnutls giflib lib32-giflib \
+  gnutls lib32-gnutls giflib \
   v4l2loopback-dkms v4l2loopback-utils
 
-echo "=== 5. Install Aplikasi AUR (Brave, Proton-GE) ==="
+echo "=== 5. Install Aplikasi AUR (Brave, ProtonUp-Qt, Proton-GE, lib32-giflib) ==="
 yay -S --noconfirm --needed \
   brave-bin \
   darkly-bin \
-  proton-ge-custom-bin
+  protonup-qt \
+  proton-ge-custom-bin \
+  lib32-giflib
 
 echo "=== 6. Enable Service LACT (Overclock & Fan Control AMD) ==="
 sudo systemctl enable --now lactd
@@ -62,7 +64,6 @@ if [ -d "/mnt/wdblue" ]; then
 fi
 
 echo "=== 9. Setup Ocypus Gamma A40 Digital Cooler Display ==="
-# Menggunakan python-hidapi yang benar untuk Arch Linux
 sudo pacman -S --noconfirm --needed python python-pip python-hidapi python-psutil
 
 OCYPUS_SRC="/mnt/wdblue/ocypus-a40-digital-linux"
